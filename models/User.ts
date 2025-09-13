@@ -4,9 +4,9 @@ import bcrypt from "bcryptjs";
 export interface IUser {
   _id?: mongoose.Types.ObjectId;
   email: string;
-  username: string;
+  username?: string;
   password: string;
-  profilePicture: string;
+  profilePicture?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -14,9 +14,9 @@ export interface IUser {
 const userSchema = new mongoose.Schema<IUser>(
   {
     email: { type: String, required: true, unique: true },
-    username: { type: String, required: true, unique: true },
+    username: { type: String, required: false },
     password: { type: String, required: true },
-    profilePicture: { type: String, required: true },
+    profilePicture: { type: String, required: false },
   },
   {
     timestamps: true,
@@ -30,6 +30,7 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
   next();
 }); 
+
 const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
 
 export default User;
